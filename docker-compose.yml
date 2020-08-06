@@ -1,0 +1,44 @@
+version: '3.8'
+services:
+
+  #Laravel App
+  php-fpm:
+    build: 
+      context:  ./.docker/php-fpm
+      args:
+        USER_ID: ${USER_ID:-0}
+        GROUP_ID: ${GROUP_ID:-0}
+    volumes:
+      - ./app/html:/var/www/html
+    networks:
+      - network
+      - mongo
+      - mysql
+
+  #Nginx Service
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./app/html:/var/www/html
+      - ./.docker/nginx/conf.d/:/etc/nginx/conf.d/
+    networks:
+      - network
+      - mongo
+      - mysql
+    depends_on:
+      - php-fpm
+
+#Docker Networks
+networks:
+  network:
+    driver: bridge
+  mongo:
+    external: true
+    name: mongo_default
+  mysql:
+    external: true
+    name: mysql_default
