@@ -1,4 +1,4 @@
-FROM jflahaut/php-fpm:latest
+FROM jflahaut/php-fpm:7.4
 
 ARG USER_ID
 ARG GROUP_ID
