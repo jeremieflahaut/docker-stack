@@ -3,8 +3,6 @@ FROM jflahaut/php-fpm:latest
 ARG USER_ID
 ARG GROUP_ID
 
-COPY startup.sh /var/bin/startup.sh
-
 RUN if [ ${USER_ID:-0} -ne 0 ] && [ ${GROUP_ID:-0} -ne 0 ]; then \
     userdel -f www-data &&\
     if getent group www-data ; then groupdel www-data; fi && \
@@ -17,6 +15,13 @@ RUN if [ ${USER_ID:-0} -ne 0 ] && [ ${GROUP_ID:-0} -ne 0 ]; then \
         /var/www/html \
     ;fi
 
+ADD cron /etc/cron.d/cron
+RUN chmod 0644 /etc/cron.d/cron && crontab /etc/cron.d/cron && touch /var/log/cron.log
+RUN echo "%www-data ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+
+
 USER www-data
+
+COPY startup.sh /var/bin/startup.sh
 
 CMD ["/bin/bash", "/var/bin/startup.sh"]

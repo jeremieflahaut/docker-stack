@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
-#touch /var/www/html/test.txt
 
+echo "Install cron ..."
+sudo cron
+echo "Cron Done !"
+
+echo "Start php-fpm"
 php-fpm
