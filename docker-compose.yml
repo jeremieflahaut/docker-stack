@@ -1,10 +1,10 @@
 version: '3.8'
-services:
 
-  #Laravel App
+services:
   php-fpm:
+    container_name: ${COMPOSE_PROJECT_NAME}_php
     build: 
-      context:  ./.docker/php-fpm
+      context: ./.docker/php-fpm
       args:
         USER_ID: ${USER_ID:-0}
         GROUP_ID: ${GROUP_ID:-0}
@@ -15,8 +15,8 @@ services:
       - mongo
       - mysql
 
-  #Nginx Service
   nginx:
+    container_name: ${COMPOSE_PROJECT_NAME}_nginx
     image: nginx:latest
     container_name: nginx
     ports:
@@ -32,7 +32,20 @@ services:
     depends_on:
       - php-fpm
 
-#Docker Networks
+  webpack:
+    container_name: ${COMPOSE_PROJECT_NAME}_webpack
+    build: 
+      context: ./.docker/webpack
+      args:
+        USER_ID: ${USER_ID:-0}
+        GROUP_ID: ${GROUP_ID:-0}
+    environment: 
+      - APP_ENV=${APP_ENV}
+    volumes:
+      - ./app/html:/var/www/html
+    ports:
+      - "3000:3000"
+
 networks:
   network:
     driver: bridge

@@ -3,7 +3,7 @@ FROM jflahaut/php-fpm:latest
 ARG USER_ID
 ARG GROUP_ID
 
-copy startup.sh /var/bin/startup.sh
+COPY startup.sh /var/bin/startup.sh
 
 RUN if [ ${USER_ID:-0} -ne 0 ] && [ ${GROUP_ID:-0} -ne 0 ]; then \
     userdel -f www-data &&\
@@ -14,6 +14,7 @@ RUN if [ ${USER_ID:-0} -ne 0 ] && [ ${GROUP_ID:-0} -ne 0 ]; then \
     chown --changes --silent --no-dereference --recursive \
           --from=33:33 ${USER_ID}:${GROUP_ID} \
         /home/www-data \
+        /var/www/html \
     ;fi
 
 USER www-data
