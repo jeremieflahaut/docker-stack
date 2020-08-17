@@ -11,25 +11,27 @@ services:
     volumes:
       - ./app/html:/var/www/html
     networks:
-      - network
+      - antibes
       - mongo
       - mysql
+    labels:
+      - "traefik.enable=false"
 
   nginx:
     container_name: ${COMPOSE_PROJECT_NAME}_nginx
     image: nginx:latest
-    ports:
-      - "80:80"
-      - "443:443"
     volumes:
       - ./app/html:/var/www/html
       - ./.docker/nginx/conf.d/:/etc/nginx/conf.d/
     networks:
-      - network
-      - mongo
-      - mysql
+      - antibes
     depends_on:
       - php-fpm
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.nginx.rule=Host(`covid.dev-fullstack.net`)"
+      - "traefik.http.routers.nginx.entrypoints=websecure"
+      - "traefik.http.routers.nginx.tls.certresolver=myresolver"
 
   webpack:
     container_name: ${COMPOSE_PROJECT_NAME}_webpack
@@ -42,12 +44,13 @@ services:
       - APP_ENV=${APP_ENV}
     volumes:
       - ./app/html:/var/www/html
-    ports:
-      - "3000:3000"
-
+    labels:
+      - "traefik.enable=false"
+ 
 networks:
-  network:
-    driver: bridge
+  antibes:
+    external: true
+    name: antibes
   mongo:
     external: true
     name: mongo_default
