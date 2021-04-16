@@ -3,6 +3,15 @@ FROM jflahaut/php-fpm:7.4
 ARG USER_ID
 ARG GROUP_ID
 
+RUN sudo apt-get update && apt-get install -y wget
+
+RUN wget https://github.com/mailhog/mhsendmail/releases/download/v0.2.0/mhsendmail_linux_amd64
+
+RUN sudo chmod +x mhsendmail_linux_amd64
+RUN sudo mv mhsendmail_linux_amd64 /usr/local/bin/mhsendmail
+
+RUN echo "sendmail_path = '/usr/local/bin/mhsendmail --smtp-addr=mail:1025'" >> /usr/local/etc/php/php.ini
+
 RUN if [ ${USER_ID:-0} -ne 0 ] && [ ${GROUP_ID:-0} -ne 0 ]; then \
     userdel -f www-data &&\
     if getent group www-data ; then groupdel www-data; fi && \
