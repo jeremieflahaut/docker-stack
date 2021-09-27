@@ -1,37 +1,21 @@
 version: '3.8'
 
 services:
-  php-fpm:
-    container_name: ${COMPOSE_PROJECT_NAME}_php
-    build: 
-      context: ./.docker/php-fpm
-      args:
-        USER_ID: ${USER_ID:-0}
-        GROUP_ID: ${GROUP_ID:-0}
+  web:
+    container_name: ${COMPOSE_PROJECT_NAME}_web
+    image: jflahaut/nginx-php
+    environment: 
+      - USER_ID=${USER_ID:-0}
+      - GROUP_ID=${GROUP_ID:-0}
     volumes:
       - ./app/html:/var/www/html
     networks:
       - antibes
-      - mongo
-      - mysql
     labels:
       - "traefik.enable=false"
-
-  nginx:
-    container_name: ${COMPOSE_PROJECT_NAME}_nginx
-    image: nginx:latest
-    volumes:
-      - ./app/html:/var/www/html
-      - ./.docker/nginx/conf.d/:/etc/nginx/conf.d/
-    networks:
-      - antibes
-    depends_on:
-      - php-fpm
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.nginx.rule=Host(`covid.dev-fullstack.net`)"
-      - "traefik.http.routers.nginx.entrypoints=websecure"
-      - "traefik.http.routers.nginx.tls.certresolver=myresolver"
+      - "traefik.http.routers.web.rule=Host(`covid.dev-fullstack.net`)"
+      - "traefik.http.routers.web.entrypoints=websecure"
+      - "traefik.http.routers.web.tls.certresolver=myresolver"
 
   webpack:
     container_name: ${COMPOSE_PROJECT_NAME}_webpack
@@ -51,9 +35,3 @@ networks:
   antibes:
     external: true
     name: antibes
-  mongo:
-    external: true
-    name: mongo_default
-  mysql:
-    external: true
-    name: mysql_default
