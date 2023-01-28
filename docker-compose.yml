@@ -3,7 +3,7 @@ version: '3.8'
 services:
   web:
     container_name: ${COMPOSE_PROJECT_NAME}_web
-    image: jflahaut/apache-php
+    image: jflahaut/apache-php:8.2
     environment: 
       - USER_ID=${USER_ID:-0}
       - GROUP_ID=${GROUP_ID:-0}
