@@ -1,4 +1,4 @@
-version: '3.8'
+version: '3'
 
 services:
   web:
@@ -11,6 +11,8 @@ services:
       - ./app/html:/var/www/html
     networks:
       - antibes
+    ports:
+      - 11000:80
     labels:
       - "traefik.enable=false"
       - "traefik.http.routers.web.rule=Host(`covid.dev-fullstack.net`)"
@@ -26,11 +28,17 @@ services:
         GROUP_ID: ${GROUP_ID:-0}
     environment: 
       - APP_ENV=${APP_ENV}
+      - USER_ID=${USER_ID:-0}
+      - GROUP_ID=${GROUP_ID:-0}
     volumes:
       - ./app/html:/var/www/html
+    networks:
+      - antibes
+    ports: 
+      - 3000:3000
     labels:
       - "traefik.enable=false"
- 
+
 networks:
   antibes:
     external: true

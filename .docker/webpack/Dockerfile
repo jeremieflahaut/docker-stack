@@ -1,25 +1,16 @@
-FROM node:14-slim
-
-WORKDIR /var/www/html
+FROM node:18-slim
 
 ARG USER_ID
 ARG GROUP_ID
 
-RUN if [ ${USER_ID:-0} -ne 0 ] && [ ${GROUP_ID:-0} -ne 0 ]; then \
-    userdel -f node &&\
-    if getent group node ; then groupdel node; fi && \
-    groupadd -g ${GROUP_ID} node && \
-    useradd -l -u ${USER_ID} -g node node && \
-    install -d -m 0755 -o node -g node /home/node && \
-    chown --changes --silent --no-dereference --recursive \
-          --from=1000:1000 ${USER_ID}:${GROUP_ID} \
-        /home/node \
-        /var/www/html \
-    ;fi
+RUN apt-get update \
+   && apt-get install -y sudo git curl jq gpg libcap2-bin
 
-USER node
+RUN setcap cap_net_bind_service=+ep `readlink -f \`which node\`` 
 
-EXPOSE 3000
+RUN apt-get autoremove -y && apt-get clean all
+
+WORKDIR /var/www/html
 
 COPY startup.sh /var/bin/startup.sh
 
