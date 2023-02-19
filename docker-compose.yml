@@ -19,10 +19,10 @@ services:
       - "traefik.http.routers.web.entrypoints=websecure"
       - "traefik.http.routers.web.tls.certresolver=myresolver"
 
-  webpack:
-    container_name: ${COMPOSE_PROJECT_NAME}_webpack
+  inertia:
+    container_name: ${COMPOSE_PROJECT_NAME}_inertia
     build: 
-      context: ./.docker/webpack
+      context: ./.docker/inertia
       args:
         USER_ID: ${USER_ID:-0}
         GROUP_ID: ${GROUP_ID:-0}
@@ -34,8 +34,6 @@ services:
       - ./app/html:/var/www/html
     networks:
       - antibes
-    ports: 
-      - 3000:3000
     labels:
       - "traefik.enable=false"
 

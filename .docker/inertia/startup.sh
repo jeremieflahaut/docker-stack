@@ -13,7 +13,7 @@ groupmod -g 10000 node
 find / -group 10000 -exec chgrp -h node {} \;
 find / -user 10000 -exec chown -h node {} \;
 
-echo -e "   user: ${USER} - ${USER_ID}:${USER_GID}"
+echo -e "user: ${USER} - ${USER_ID}:${USER_GID}"
 
 # now creating user
 groupadd -g "${GROUP_ID}" "${USER}"
