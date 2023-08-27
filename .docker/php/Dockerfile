@@ -7,8 +7,7 @@ RUN apt-get update \
     && apt-get upgrade -y \ 
     && rm -rf /var/lib/apt/lists/* \
     && apt-get autoremove -y \
-    && apt-get clean all \
-    && apt-get clean
+    && apt-get clean all
 
 RUN usermod -u $USER_ID www-data && groupmod -g $GROUP_ID www-data
 RUN chown -R www-data:www-data /var/www
