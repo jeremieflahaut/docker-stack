@@ -1,37 +1,41 @@
 version: '3.8'
 
 services:
-  web:
-    container_name: ${COMPOSE_PROJECT_NAME}_web
-    image: jflahaut/nginx-php:8.2
-    environment: 
-      - USER_ID=${USER_ID:-0}
-      - GROUP_ID=${GROUP_ID:-0}
+  nginx:
+      container_name: ${COMPOSE_PROJECT_NAME}_nginx
+      image: jflahaut/nginx-laravel:latest
+      depends_on: 
+        - php-fpm
+      environment:
+        - STACK_NAME=${COMPOSE_PROJECT_NAME}
+      volumes:
+        - ./app/html:/var/www/html
+      networks:
+        - antibes
+      labels:
+        - "traefik.enable=false"
+        - "traefik.http.routers.web.rule=Host(`www.dev-fullstack.net`)"
+        - "traefik.http.routers.web.entrypoints=websecure"
+        - "traefik.http.routers.web.tls.certresolver=myresolver"
+
+  php-fpm:
+    container_name: ${COMPOSE_PROJECT_NAME}_php-fpm
+    build:
+      context: ./.docker/php
+      args:
+        - USER_ID=${USER_ID:-0}
+        - GROUP_ID=${GROUP_ID:-0}
     volumes:
       - ./app/html:/var/www/html
-    networks:
-      - antibes
+
     labels:
       - "traefik.enable=false"
       - "traefik.http.routers.web.rule=Host(`covid.dev-fullstack.net`)"
       - "traefik.http.routers.web.entrypoints=websecure"
       - "traefik.http.routers.web.tls.certresolver=myresolver"
 
-  webpack:
-    container_name: ${COMPOSE_PROJECT_NAME}_webpack
-    build: 
-      context: ./.docker/webpack
-      args:
-        USER_ID: ${USER_ID:-0}
-        GROUP_ID: ${GROUP_ID:-0}
-    environment: 
-      - APP_ENV=${APP_ENV}
-    volumes:
-      - ./app/html:/var/www/html
-    labels:
-      - "traefik.enable=false"
- 
 networks:
   antibes:
     external: true
     name: antibes
+
