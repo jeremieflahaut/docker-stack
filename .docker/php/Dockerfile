@@ -1,13 +1,9 @@
-FROM jflahaut/php-fpm:latest
+FROM jflahaut/php-fpm:master
 
 ARG USER_ID
 ARG GROUP_ID
 
-RUN apt-get update \ 
-    && apt-get upgrade -y \ 
-    && rm -rf /var/lib/apt/lists/* \
-    && apt-get autoremove -y \
-    && apt-get clean all
+RUN apt-get update && apt-get install fswatch && apt-get upgrade -y && rm -rf /var/lib/apt/lists/* && apt-get autoremove -y && apt-get clean all
 
 RUN usermod -u $USER_ID www-data && groupmod -g $GROUP_ID www-data
 RUN chown -R www-data:www-data /var/www
