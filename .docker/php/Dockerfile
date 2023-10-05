@@ -16,6 +16,3 @@ RUN chmod 0644 /etc/cron.d/laravel
 USER www-data
 
 RUN crontab /etc/cron.d/laravel
-
-ENV PATH="/var/www/.composer/vendor/bin:${PATH}"
-RUN composer global require laravel/installer
