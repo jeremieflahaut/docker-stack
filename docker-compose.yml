@@ -31,7 +31,25 @@ services:
       - antibes
     labels:
       - "traefik.enable=false"
-      - "traefik.http.routers.web.rule=Host(`covid.dev-fullstack.net`)"
+
+  node:
+    container_name: ${COMPOSE_PROJECT_NAME}_node
+    build:
+      context: ./.docker/node
+      args:
+        - USER_ID=${USER_ID:-0}
+        - GROUP_ID=${GROUP_ID:-0}
+    environment:
+      - APP_ENV=${APP_ENV}
+      - USER_ID=${USER_ID:-0}
+      - GROUP_ID=${GROUP_ID:-0}
+    volumes:
+      - ./app/html:/var/www/html
+    networks:
+      - antibes
+    labels:
+      - "traefik.enable=false"
+      - "traefik.http.routers.web.rule=Host(`node.dev-fullstack.net`)"
       - "traefik.http.routers.web.entrypoints=websecure"
       - "traefik.http.routers.web.tls.certresolver=myresolver"
 
