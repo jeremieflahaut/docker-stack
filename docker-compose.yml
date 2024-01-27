@@ -27,7 +27,8 @@ services:
         - GROUP_ID=${GROUP_ID:-0}
     volumes:
       - ./app/html:/var/www/html
-
+    networks:
+      - antibes
     labels:
       - "traefik.enable=false"
       - "traefik.http.routers.web.rule=Host(`covid.dev-fullstack.net`)"
